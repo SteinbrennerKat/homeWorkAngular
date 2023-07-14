@@ -1,8 +1,8 @@
 <div class="header">
   <div>
     <h1>{{title}}</h1>
-    <mat-hint *ngIf="user?.createdAt">
-      Last Updated Date: {{user.createdAt | date}}
+    <mat-hint *ngIf="user?.createdDate">
+      Last Updated Date: {{(user.editedDate ?? user?.createdDate) | date}}
     </mat-hint>
   </div>
   <div>
@@ -20,11 +20,11 @@
       <div class="row">
         <mat-form-field>
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName">
+          <input matInput formControlName="name">
         </mat-form-field>
         <mat-form-field>
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName">
+          <input matInput formControlName="surname">
         </mat-form-field>
       </div>
       <div class="row">
@@ -65,8 +65,8 @@
 <ng-template #readOnlySection>
   <mat-card class="card">
     <mat-card-content class="readonly-user">
-      <div>First Name: {{user.firstName}}</div>
-      <div>Last Name: {{user.lastName}}</div>
+      <div>First Name: {{user.name}}</div>
+      <div>Last Name: {{user.surname}}</div>
       <div>E-Mail: {{user.email}}</div>
       <div>User Role: {{user.role}}</div>
     </mat-card-content>

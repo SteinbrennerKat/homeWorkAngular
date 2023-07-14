@@ -13,13 +13,6 @@ import {BehaviorSubject} from "rxjs";
 import {MatButtonModule} from "@angular/material/button";
 import {UserService} from "../../services/user.service";
 
-interface UserFormInterface {
-  firstName: AbstractControl<string>;
-  lastName: AbstractControl<string>;
-  email: AbstractControl<string>;
-  role: AbstractControl<string>;
-}
-
 @Component({
   selector: 'app-create-user',
   templateUrl: './create-user.component.html',
@@ -68,8 +61,8 @@ export class CreateUserComponent implements OnInit {
   private initForm() {
     this.form = this.fb.nonNullable.group({
       email: '',
-      firstName: '',
-      lastName: '',
+      name: '',
+      surname: '',
       role: ''
     })
   }

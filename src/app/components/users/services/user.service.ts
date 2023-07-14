@@ -2,81 +2,16 @@ import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
 import {User, UserTable} from "../interfaces/users.interface";
 import {UserRoleEnum} from "../enums/user-role.enum";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable()
 export class UserService {
+
+  constructor(
+    private readonly http: HttpClient,
+  ) {}
   fetchUsers(pageNumber: Number, pageSize: Number): Observable<UserTable> {
-    return of({
-      data: [
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        },
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        },
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        },
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        },
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        },
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        },
-        {
-          lastName: 'Adminski',
-          firstName: 'Adler',
-          id: '1234-1234-1234-1234-1234',
-          createdAt: '2023-06-22T23:00:00.000Z',
-          editedAt: 'null',
-          email: 'adler@gmail.com',
-          role: UserRoleEnum.ADMIN,
-        }
-      ],
-      page: 1,
-      per_page: 3,
-      total: 7,
-      total_pages: 0,
-    })
+    return this.http.get<UserTable>('home-work-users/users-page');
   }
 
   deleteUser(id: string): void {
@@ -92,8 +27,8 @@ export class UserService {
 
     // @ts-ignore
     return of(        {
-      lastName: 'Adminski',
-      firstName: 'Adler',
+      surname: 'Adminski',
+      name: 'Adler',
       id: '1234-1234-1234-1234-1234',
       createdAt: '2023-06-22T23:00:00.000Z',
       editedAt: 'null',

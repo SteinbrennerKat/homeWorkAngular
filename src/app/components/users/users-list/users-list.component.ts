@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, TitleCasePipe} from "@angular/common";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
@@ -47,11 +47,11 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   columns: string[] = [];
   displayedColumns: ColumnsInterface[] = COLUMNS_CONFIG;
   userTable: UserTable = {
-    data: [],
-    page: 0,
-    per_page: 3,
-    total_pages: 0,
-    total: 0,
+    users: [],
+    number: 0,
+    size: 3,
+    totalPages: 0,
+    totalElements: 0,
   };
   tableMenuItemsEnum = TableMenuItemsEnum;
   tableMenuConfig: TableMenuItemsInterface[] = TABLE_MENU_ITEMS_CONFIG;
@@ -66,6 +66,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly dialog: MatDialog,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   // @ts-ignore
@@ -96,16 +97,17 @@ export class UsersListComponent implements OnInit, AfterViewInit {
             this.paginator.pageSize
           ).pipe(catchError(() => of(null)));
         }),
-        map((empData) => {
-          if (empData == null) return [];
-          this.totalData = empData.total;
+        map((res) => {
+          if (res == null) return [];
+          this.totalData = res.totalElements;
           this.isLoading = false;
-          return empData.data;
+          return res.users;
         })
       )
       .subscribe((response) => {
         this.userData = response;
         this.dataSource = new MatTableDataSource(this.userData);
+        this.cdr.detectChanges();
       });
   }
 

@@ -2,17 +2,17 @@ import {ColumnsInterface} from "../interfaces/columns.interface";
 
 export const COLUMNS_CONFIG: ColumnsInterface[] = [
   {
-    key: 'createdAt',
+    key: 'createdDate',
     name: 'Created Date',
     type: 'datetime',
   },
   {
-    key: 'firstName',
+    key: 'name',
     name: 'First Name',
     type: 'text',
   },
   {
-    key: 'lastName',
+    key: 'surname',
     name: 'Last Name',
     type: 'text',
   },
