@@ -12,10 +12,13 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import {RouterLink, RouterModule, RouterOutlet} from "@angular/router";
 import {AppRoutes} from "./consts/app-routing.const";
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
     AppComponent,
+    ConfirmationDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,6 +35,7 @@ import {AppRoutes} from "./consts/app-routing.const";
     ),
     RouterOutlet,
     RouterLink,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

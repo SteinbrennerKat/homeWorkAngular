@@ -1,25 +1,27 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
-import {NgForOf, NgIf, TitleCasePipe} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, TitleCasePipe} from "@angular/common";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
-import {User, UserTable} from "./interfaces/users.interface";
-import {UserService} from "./services/user.service";
-import {catchError, map, of, startWith, switchMap} from "rxjs";
-import {ColumnsInterface} from "./interfaces/columns.interface";
-import {COLUMNS_CONFIG} from "./consts/columns.config";
+import {User, UserTable} from "../interfaces/users.interface";
+import {UserService} from "../services/user.service";
+import {catchError, filter, map, of, startWith, switchMap} from "rxjs";
+import {ColumnsInterface} from "../interfaces/columns.interface";
+import {COLUMNS_CONFIG} from "../consts/columns.config";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
-import {TableMenuItemsInterface} from "./interfaces/table-menu-items.interface";
-import {TABLE_MENU_ITEMS_CONFIG} from "./consts/table-menu-items.config";
-import {TableMenuItemsEnum} from "./enums/table-menu-items.enum";
+import {TableMenuItemsInterface} from "../interfaces/table-menu-items.interface";
+import {TABLE_MENU_ITEMS_CONFIG} from "../consts/table-menu-items.config";
+import {TableMenuItemsEnum} from "../enums/table-menu-items.enum";
 import {ActivatedRoute, Router} from "@angular/router";
+import {MatDialog, MatDialogModule} from "@angular/material/dialog";
+import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
+  templateUrl: './users-list.component.html',
+  styleUrls: ['./users-list.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -32,12 +34,16 @@ import {ActivatedRoute, Router} from "@angular/router";
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatDialogModule,
+    NgSwitchCase,
+    NgSwitch,
+    DatePipe,
   ],
   providers: [
     UserService,
   ]
 })
-export class UsersComponent implements OnInit, AfterViewInit {
+export class UsersListComponent implements OnInit, AfterViewInit {
   columns: string[] = [];
   displayedColumns: ColumnsInterface[] = COLUMNS_CONFIG;
   userTable: UserTable = {
@@ -59,6 +65,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     private readonly service: UserService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly dialog: MatDialog,
   ) {}
 
   // @ts-ignore
@@ -106,14 +113,37 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return this.service.fetchUsers(pageNumber, pageSize);
   }
 
-  onActionButtonClick(event: MouseEvent, user: User, value: TableMenuItemsEnum): void {
+  onActionButtonClick(value: TableMenuItemsEnum, user: User = {}): void {
     switch (value) {
       case TableMenuItemsEnum.EDIT:
-        this.routeToCreatePage(user);
+        this.routeToEditPage(TableMenuItemsEnum.EDIT, user);
+        break;
+      case TableMenuItemsEnum.DELETE:
+        this.openDeleteConfirmationDialog(user);
+        break;
+      case TableMenuItemsEnum.CREATE:
+        this.routeToEditPage(TableMenuItemsEnum.CREATE);
+        break;
+      case TableMenuItemsEnum.DETAILS:
+        this.routeToEditPage(TableMenuItemsEnum.DETAILS, user);
     }
   }
 
-  private routeToCreatePage(user: User): void {
-    this.router.navigate([user.id], {relativeTo: this.route}).then()
+  private routeToEditPage(pageType: string, user?: User): void {
+    if (user?.id) {
+      this.router.navigate([user.id, pageType], {relativeTo: this.route}).then()
+    } else {
+      this.router.navigate([pageType], {relativeTo: this.route}).then()
+    }
+
+  }
+
+  private openDeleteConfirmationDialog(user: User): void {
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '650px',
+      data: user,
+    }).afterClosed().pipe(filter(v => !!v)).subscribe(res => {
+      this.service.deleteUser(user.id);
+    });
   }
 }

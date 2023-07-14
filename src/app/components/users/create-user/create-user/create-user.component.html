@@ -1,1 +1,74 @@
-<p>create-user works!</p>
+<div class="header">
+  <div>
+    <h1>{{title}}</h1>
+    <mat-hint *ngIf="user?.createdAt">
+      Last Updated Date: {{user.createdAt | date}}
+    </mat-hint>
+  </div>
+  <div>
+    <button
+      mat-stroked-button
+      (click)="onEditClick()"
+      *ngIf="readonly">
+      Edit Profile
+    </button>
+  </div>
+</div>
+<mat-card class="card" *ngIf="!readonly; else readOnlySection">
+  <mat-card-content>
+    <form [formGroup]="form" class="form">
+      <div class="row">
+        <mat-form-field>
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName">
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input matInput formControlName="email">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Select</mat-label>
+          <mat-select formControlName="role">
+            <mat-option
+              *ngFor="let role of userRolesList"
+              [value]="role">
+              {{role | titlecase}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-card-content>
+  <mat-card-actions class="action-group">
+    <button
+      (click)="onFormCancel()"
+      mat-button
+      color="primary">
+      Cancel
+    </button>
+    <button
+      (click)="onFormSubmit()"
+      mat-flat-button
+      color="primary">
+      Submit Form
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+
+<ng-template #readOnlySection>
+  <mat-card class="card">
+    <mat-card-content class="readonly-user">
+      <div>First Name: {{user.firstName}}</div>
+      <div>Last Name: {{user.lastName}}</div>
+      <div>E-Mail: {{user.email}}</div>
+      <div>User Role: {{user.role}}</div>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
