@@ -1,0 +1,22 @@
+$icon-color: #7e57c2;
+
+.main-toolbar {
+  background-image: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%);
+
+  &__left-side-block {
+    color: $icon-color;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 24px;
+
+    .link {
+      height: 24px;
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+}
