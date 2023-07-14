@@ -6,8 +6,7 @@ class="table-wrapper">
     class="mat-elevation-z8">
     <ng-container
       *ngFor="let column of displayedColumns"
-      [matColumnDef]="column.key"
-    >
+      [matColumnDef]="column.key">
       <ng-container *ngIf="column.key !== 'actions'">
         <th mat-header-cell *matHeaderCellDef>{{ column.name | titlecase }}</th>
         <td mat-cell *matCellDef="let user">{{ user[column.key] }}</td>
@@ -15,19 +14,32 @@ class="table-wrapper">
       <ng-container *ngIf="column.key === 'actions'">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let user; let i = index">
-          <button mat-icon-button
-                  (click)="$event.stopPropagation()"
-                  [matMenuTriggerData]="{element: user}"
-                  [matMenuTriggerFor]="menu">
+          <button
+            mat-icon-button
+            (click)="$event.stopPropagation()"
+            [matMenuTriggerData]="{element: user}"
+            [matMenuTriggerFor]="menu">
             <mat-icon class="default-icon-color">more_vert</mat-icon>
           </button>
         </td>
       </ng-container>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr mat-row class="row" *matRowDef="let userRow; columns: columns" (click)="onRowClickOpenDetails(userRow)"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="columns">
+    </tr>
+    <tr
+      mat-row
+      class="row"
+      *matRowDef="let userRow;
+      columns: columns"
+      (click)="onActionButtonClick($event, userRow, tableMenuItemsEnum.DETAILS)">
+    </tr>
   </table>
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+  <mat-progress-bar
+    mode="indeterminate"
+    *ngIf="isLoading">
+  </mat-progress-bar>
   <mat-paginator
     #paginator
     [length]="totalData"
@@ -35,7 +47,6 @@ class="table-wrapper">
     showFirstLastButtons
   ></mat-paginator>
 </div>
-
 
 <mat-menu #menu="matMenu">
   <ng-template matMenuContent let-element="element">
@@ -47,5 +58,4 @@ class="table-wrapper">
       <span>{{menuItem.name}}</span>
     </button>
   </ng-template>
-
 </mat-menu>

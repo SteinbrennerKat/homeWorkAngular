@@ -14,6 +14,7 @@ import {MatMenuModule} from "@angular/material/menu";
 import {TableMenuItemsInterface} from "./interfaces/table-menu-items.interface";
 import {TABLE_MENU_ITEMS_CONFIG} from "./consts/table-menu-items.config";
 import {TableMenuItemsEnum} from "./enums/table-menu-items.enum";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-users',
@@ -46,6 +47,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     total_pages: 0,
     total: 0,
   };
+  tableMenuItemsEnum = TableMenuItemsEnum;
   tableMenuConfig: TableMenuItemsInterface[] = TABLE_MENU_ITEMS_CONFIG;
   totalData = 0;
   userData: User[] = [];
@@ -55,6 +57,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   constructor(
     private readonly service: UserService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   // @ts-ignore
@@ -69,6 +73,10 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.fetch();
+  }
+
+  private fetch() {
     this.dataSource.paginator = this.paginator;
 
     this.paginator.page
@@ -99,10 +107,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   onActionButtonClick(event: MouseEvent, user: User, value: TableMenuItemsEnum): void {
-    console.log(value, user);
+    switch (value) {
+      case TableMenuItemsEnum.EDIT:
+        this.routeToCreatePage(user);
+    }
   }
 
-  onRowClickOpenDetails(user: User): void {
-    console.log(user);
+  private routeToCreatePage(user: User): void {
+    this.router.navigate([user.id], {relativeTo: this.route}).then()
   }
 }
