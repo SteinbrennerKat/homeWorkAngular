@@ -14,13 +14,13 @@ export class AppComponent {
   showFiller = false;
   links: SidenavListInterface[] = [
     {
-      name: 'Users',
-      isActive: true,
-      route: AppNavigationEnum.USERS,
+      name: 'Home Page',
+      isActive: false,
+      route: AppNavigationEnum.WELCOME,
     },
     {
       name: 'Users',
-      isActive: true,
+      isActive: false,
       route: AppNavigationEnum.USERS,
     },
   ];
