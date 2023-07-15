@@ -1,4 +1,5 @@
 import {UserRoleEnum} from "../enums/user-role.enum";
+import {Sort} from "@angular/material/sort";
 
 export interface User {
   id?: string;
@@ -18,4 +19,14 @@ export interface UserTable {
   size: number;
   totalElements: number;
   totalPages: number;
+}
+
+export interface Pagination {
+  pageSize: number;
+  pageIndex: number;
+}
+
+export interface UsersRequest {
+  sort: Sort;
+  pagination: Pagination;
 }

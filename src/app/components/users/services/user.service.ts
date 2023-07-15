@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
-import {Observable, of} from "rxjs";
-import {User, UserTable} from "../interfaces/users.interface";
+import {Observable} from "rxjs";
+import {User, UsersRequest, UserTable} from "../interfaces/users.interface";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable()
@@ -11,8 +11,14 @@ export class UserService {
   constructor(
     private readonly http: HttpClient,
   ) {}
-  fetchUsers(pageNumber: number, pageSize: number): Observable<UserTable> {
-    return this.http.get<UserTable>(`${this.primaryPath}users-page?page=${pageNumber - 1}&size=${pageSize}`);
+  fetchUsers(requestParams: UsersRequest): Observable<UserTable> {
+    const {pagination, sort} = requestParams;
+    return this.http.get<UserTable>(
+      `${this.primaryPath}users-page?page=${pagination.pageIndex
+      }&size=${pagination.pageSize
+      }&sortOrder=${sort.active
+      }&direction=${sort.direction.toUpperCase()}`,
+    );
   }
 
   deleteUser(id: string): Observable<User> {

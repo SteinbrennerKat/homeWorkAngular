@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
 import {FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
@@ -9,9 +9,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {TableMenuItemsEnum} from "../../enums/table-menu-items.enum";
 import {User} from "../../interfaces/users.interface";
 import {UserCreateResolverEnum} from "../../enums/user-create-resolver.enum";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subject, takeUntil} from "rxjs";
 import {MatButtonModule} from "@angular/material/button";
 import {UserService} from "../../services/user.service";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 @Component({
   selector: 'app-create-user',
@@ -29,15 +30,17 @@ import {UserService} from "../../services/user.service";
     DatePipe,
     NgIf,
     MatButtonModule,
+    MatProgressBarModule,
   ]
 })
-export class CreateUserComponent implements OnInit {
+export class CreateUserComponent implements OnInit, OnDestroy {
   title: string = '';
   user: User;
-  // @ts-ignore
   form: FormGroup;
   userRolesList = [UserRoleEnum.USER, UserRoleEnum.ADMIN]
-  readonly: boolean = false;
+  readonly = false;
+  isLoading = false;
+  private destroy$: Subject<void> = new Subject();
 
   constructor(
     private readonly fb: FormBuilder,
@@ -55,6 +58,11 @@ export class CreateUserComponent implements OnInit {
     if (this.user) {
       this.updateFormWithUserData();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
@@ -102,11 +110,21 @@ export class CreateUserComponent implements OnInit {
   }
 
   onFormSubmit(): void {
-    console.log(this.form.value);
+    this.isLoading = true;
     if (this.user) {
-      this.service.editUser(this.form.value, this.user.id).subscribe();
+      this.service.editUser(this.form.value, this.user.id).pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(res => {
+        this.isLoading = false;
+        this.router.navigate(['users']).then();
+      });
     } else {
-      this.service.createUser(this.form.value).subscribe(data => {});
+      this.service.createUser(this.form.value).pipe(
+        takeUntil(this.destroy$),
+        ).subscribe(res => {
+        this.isLoading = false;
+        this.router.navigate(['users']).then();
+      });
     }
 
 

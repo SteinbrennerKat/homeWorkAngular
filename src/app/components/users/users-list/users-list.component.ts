@@ -1,11 +1,19 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, TitleCasePipe} from "@angular/common";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
-import {User, UserTable} from "../interfaces/users.interface";
+import {Pagination, User, UsersRequest, UserTable} from "../interfaces/users.interface";
 import {UserService} from "../services/user.service";
-import {catchError, filter, map, of, startWith, switchMap} from "rxjs";
+import {BehaviorSubject, catchError, filter, map, of, startWith, Subject, switchMap, takeUntil} from "rxjs";
 import {ColumnsInterface} from "../interfaces/columns.interface";
 import {COLUMNS_CONFIG} from "../consts/columns.config";
 import {MatButtonModule} from "@angular/material/button";
@@ -17,6 +25,7 @@ import {TableMenuItemsEnum} from "../enums/table-menu-items.enum";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatDialog, MatDialogModule} from "@angular/material/dialog";
 import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import {MatSortModule, Sort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-users',
@@ -38,28 +47,29 @@ import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmatio
     NgSwitchCase,
     NgSwitch,
     DatePipe,
+    MatSortModule,
   ],
   providers: [
     UserService,
   ]
 })
-export class UsersListComponent implements OnInit, AfterViewInit {
+export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
+  private destroy$: Subject<void> = new Subject();
+  private sort: Sort = {active: 'createdDate', direction: 'desc'};
+  private pagination: Pagination = {pageSize: 3, pageIndex: 0};
+  private userData: User[] = [];
+
   columns: string[] = [];
+  dataSource = new MatTableDataSource<User>();
   displayedColumns: ColumnsInterface[] = COLUMNS_CONFIG;
-  userTable: UserTable = {
-    users: [],
-    number: 0,
-    size: 3,
-    totalPages: 0,
-    totalElements: 0,
-  };
+  isLoading = false;
   tableMenuItemsEnum = TableMenuItemsEnum;
   tableMenuConfig: TableMenuItemsInterface[] = TABLE_MENU_ITEMS_CONFIG;
   totalData = 0;
-  userData: User[] = [];
-  dataSource = new MatTableDataSource<User>();
-
-  isLoading = false;
+  private tableChangeRequest$: BehaviorSubject<UsersRequest> = new BehaviorSubject({
+    sort: this.sort,
+    pagination: this.pagination,
+  });
 
   constructor(
     private readonly service: UserService,
@@ -77,42 +87,22 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.displayedColumns.map(column => {
       this.columns.push(column.key);
-    })
+    });
+    this.initTableQuery()
   }
 
   ngAfterViewInit(): void {
-    this.fetch();
+    this.initPaginator();
+    this.listenForPaginationChanges();
   }
 
-  private fetch() {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private initPaginator() {
     this.dataSource.paginator = this.paginator;
-
-    this.paginator.page
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoading = true;
-          return this.getTableData$(
-            this.paginator.pageIndex + 1,
-            this.paginator.pageSize
-          ).pipe(catchError(() => of(null)));
-        }),
-        map((res) => {
-          if (res == null) return [];
-          this.totalData = res.totalElements;
-          this.isLoading = false;
-          return res.users;
-        })
-      )
-      .subscribe((response) => {
-        this.userData = response;
-        this.dataSource = new MatTableDataSource(this.userData);
-        this.cdr.detectChanges();
-      });
-  }
-
-  getTableData$(pageNumber: number, pageSize: number) {
-    return this.service.fetchUsers(pageNumber, pageSize);
   }
 
   onActionButtonClick(value: TableMenuItemsEnum, user: User = {}): void {
@@ -145,7 +135,49 @@ export class UsersListComponent implements OnInit, AfterViewInit {
       width: '650px',
       data: user,
     }).afterClosed().pipe(filter(v => !!v)).subscribe(res => {
-      this.service.deleteUser(user.id).subscribe(res => {});
+      this.service.deleteUser(user.id).subscribe(() => {
+        this.tableChangeRequest$.next({sort: this.sort, pagination: this.pagination});
+      });
     });
+  }
+
+  onSortChangeRequest(sort: Sort) {
+    this.sort = sort;
+    this.tableChangeRequest$.next({sort, pagination: this.pagination});
+  }
+
+  private listenForPaginationChanges() {
+    this.paginator.page.pipe(takeUntil(this.destroy$)).subscribe(v => {
+      this.pagination.pageIndex = v.pageIndex;
+      this.pagination.pageSize = v.pageSize;
+      this.tableChangeRequest$.next(
+        {
+          sort: this.sort,
+          pagination: {
+            pageSize: v.pageSize,
+            pageIndex: v.pageIndex,
+          },
+        });
+    });
+  }
+
+  private initTableQuery(): void {
+    this.tableChangeRequest$.pipe(
+      takeUntil(this.destroy$),
+      switchMap((req: UsersRequest) => {
+        this.isLoading = true;
+        return this.service.fetchUsers(req);
+      }),
+      map((res) => {
+        if (res == null) return [];
+        this.totalData = res.totalElements;
+        this.isLoading = false;
+        return res.users;
+      })
+    ).subscribe((response) => {
+      this.userData = response;
+      this.dataSource = new MatTableDataSource(this.userData);
+      this.cdr.detectChanges();
+    })
   }
 }

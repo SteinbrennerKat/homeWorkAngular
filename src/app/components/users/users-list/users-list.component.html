@@ -11,20 +11,24 @@
   <div
     class="table-wrapper">
     <table
+      matSort
+      (matSortChange)="onSortChangeRequest($event)"
       mat-table
       [dataSource]="dataSource">
       <ng-container
         *ngFor="let column of displayedColumns"
         [matColumnDef]="column.key">
         <ng-container *ngIf="column.key !== 'actions'">
-          <th mat-header-cell *matHeaderCellDef>{{ column.name | titlecase }}</th>
+          <th [mat-sort-header]="column.key" *matHeaderCellDef>
+            <span class="header-cell">{{column.name | titlecase}}</span>
+          </th>
           <td mat-cell *matCellDef="let user">
             <ng-container [ngSwitch]="column.type">
               <ng-container *ngSwitchCase="'text'">
                 <span>{{user[column.key]}}</span>
               </ng-container>
               <ng-container *ngSwitchCase="'datetime'">
-                <span>{{user[column.key] | date : 'dd.MM.YYYY'}}</span>
+                <span>{{user[column.key] | date : 'dd.MM.YYYY hh:mm:ss'}}</span>
               </ng-container>
             </ng-container>
           </td>
@@ -37,7 +41,7 @@
               (click)="$event.stopPropagation()"
               [matMenuTriggerData]="{element: user}"
               [matMenuTriggerFor]="menu">
-              <mat-icon class="default-icon-color">more_vert</mat-icon>
+              <mat-icon>more_vert</mat-icon>
             </button>
           </td>
         </ng-container>
@@ -62,7 +66,6 @@
       #paginator
       [length]="totalData"
       [pageSizeOptions]="pageSizes"
-      showFirstLastButtons
     ></mat-paginator>
   </div>
 </div>

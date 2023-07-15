@@ -11,6 +11,5 @@ export const UserByIdResolver: ResolveFn<Observable<any>> = (route, state) => {
 
   return inject(UserService).getUserById(route.params['id']).pipe(
     take(1),
-    tap(console.log)
   );
 };
