@@ -111,7 +111,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
       });
   }
 
-  getTableData$(pageNumber: Number, pageSize: Number) {
+  getTableData$(pageNumber: number, pageSize: number) {
     return this.service.fetchUsers(pageNumber, pageSize);
   }
 
@@ -145,7 +145,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
       width: '650px',
       data: user,
     }).afterClosed().pipe(filter(v => !!v)).subscribe(res => {
-      this.service.deleteUser(user.id);
+      this.service.deleteUser(user.id).subscribe(res => {});
     });
   }
 }

@@ -17,6 +17,16 @@ export const COLUMNS_CONFIG: ColumnsInterface[] = [
     type: 'text',
   },
   {
+    key: 'username',
+    name: 'Username',
+    type: 'text',
+  },
+  {
+    key: 'age',
+    name: 'Age',
+    type: 'text',
+  },
+  {
     key: 'email',
     name: 'E-Mail',
     type: 'text',

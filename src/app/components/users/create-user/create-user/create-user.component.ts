@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
-import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {MatSelectModule} from "@angular/material/select";
 import {UserRoleEnum} from "../../enums/user-role.enum";
 import {DatePipe, LocationStrategy, NgForOf, NgIf, TitleCasePipe} from "@angular/common";
@@ -61,9 +61,11 @@ export class CreateUserComponent implements OnInit {
   private initForm() {
     this.form = this.fb.nonNullable.group({
       email: '',
+      username: '',
       name: '',
       surname: '',
-      role: ''
+      role: '',
+      age: '',
     })
   }
 
@@ -100,10 +102,11 @@ export class CreateUserComponent implements OnInit {
   }
 
   onFormSubmit(): void {
+    console.log(this.form.value);
     if (this.user) {
-      this.service.editUser(this.user);
+      this.service.editUser(this.form.value, this.user.id).subscribe();
     } else {
-      this.service.createUser(this.user);
+      this.service.createUser(this.form.value).subscribe(data => {});
     }
 
 

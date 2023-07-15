@@ -1,43 +1,33 @@
 import {Injectable} from "@angular/core";
 import {Observable, of} from "rxjs";
 import {User, UserTable} from "../interfaces/users.interface";
-import {UserRoleEnum} from "../enums/user-role.enum";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable()
 export class UserService {
+  private readonly primaryPath = 'home-work-users/';
+  private readonly entityPath = 'user';
 
   constructor(
     private readonly http: HttpClient,
   ) {}
-  fetchUsers(pageNumber: Number, pageSize: Number): Observable<UserTable> {
-    return this.http.get<UserTable>('home-work-users/users-page');
+  fetchUsers(pageNumber: number, pageSize: number): Observable<UserTable> {
+    return this.http.get<UserTable>(`${this.primaryPath}users-page?page=${pageNumber - 1}&size=${pageSize}`);
   }
 
-  deleteUser(id: string): void {
-
+  deleteUser(id: string): Observable<User> {
+    return this.http.delete(`${this.primaryPath}${this.entityPath}/${id}`);
   }
 
-  editUser(user: User): void {
-
+  editUser(user: User, id: string): Observable<User> {
+    return this.http.put(`${this.primaryPath}${this.entityPath}/${id}`, user);
   }
 
   getUserById(id: string): Observable<User> {
-    console.log(id);
-
-    // @ts-ignore
-    return of(        {
-      surname: 'Adminski',
-      name: 'Adler',
-      id: '1234-1234-1234-1234-1234',
-      createdAt: '2023-06-22T23:00:00.000Z',
-      editedAt: 'null',
-      email: 'adler@gmail.com',
-      role: UserRoleEnum.ADMIN,
-    })
+    return this.http.get<User>(`${this.primaryPath}${this.entityPath}/${id}`);
   }
 
-  createUser(user: User): void {
-
+  createUser(user: User): Observable<User> {
+    return this.http.post(`${this.primaryPath}${this.entityPath}`, user);
   }
 }

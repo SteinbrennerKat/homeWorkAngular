@@ -26,11 +26,19 @@
           <mat-label>Last Name</mat-label>
           <input matInput formControlName="surname">
         </mat-form-field>
+        <mat-form-field>
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username">
+        </mat-form-field>
       </div>
       <div class="row">
         <mat-form-field>
           <mat-label>E-Mail</mat-label>
           <input matInput formControlName="email">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Age</mat-label>
+          <input type="number" matInput formControlName="age">
         </mat-form-field>
         <mat-form-field>
           <mat-label>Select</mat-label>
@@ -67,6 +75,8 @@
     <mat-card-content class="readonly-user">
       <div>First Name: {{user.name}}</div>
       <div>Last Name: {{user.surname}}</div>
+      <div>Username: {{user.username}}</div>
+      <div>Age: {{user.age}}</div>
       <div>E-Mail: {{user.email}}</div>
       <div>User Role: {{user.role}}</div>
     </mat-card-content>
