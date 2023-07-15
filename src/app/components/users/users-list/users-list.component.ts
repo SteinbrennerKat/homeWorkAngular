@@ -82,7 +82,7 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
   // @ts-ignore
   @ViewChild('paginator') paginator: MatPaginator;
 
-  pageSizes = [3, 5, 10, 15, 20, 50];
+  pageSizes = [10, 15, 20, 50, 100];
 
   ngOnInit(): void {
     this.displayedColumns.map(column => {
