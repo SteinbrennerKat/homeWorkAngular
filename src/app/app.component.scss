@@ -9,8 +9,9 @@
   height: calc(100% - 64px);
 
   .sidenav {
+    background-color: transparent;
+    backdrop-filter: blur(35px) grayscale(30%);
     padding: 20px;
-    background-color: rgba(#fccb90, .3);
     .list-item {
       width: 150px;
       text-align: start;

@@ -10,7 +10,7 @@ export interface User {
   email?: string;
   role?: UserRoleEnum;
   createdDate?: string;
-  editedDate?: string;
+  updatedDate?: string;
 }
 
 export interface UserTable {

@@ -28,7 +28,7 @@
                 <span>{{user[column.key]}}</span>
               </ng-container>
               <ng-container *ngSwitchCase="'datetime'">
-                <span>{{user[column.key] | date : 'dd.MM.YYYY hh:mm:ss'}}</span>
+                <span>{{user[column.key] | date : 'dd.MM.YYYY HH:mm:ss'}}</span>
               </ng-container>
             </ng-container>
           </td>
@@ -59,6 +59,7 @@
       </tr>
     </table>
     <mat-progress-bar
+      class="progress"
       mode="indeterminate"
       *ngIf="isLoading">
     </mat-progress-bar>

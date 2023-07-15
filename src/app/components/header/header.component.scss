@@ -1,6 +1,7 @@
 .main-toolbar {
   background-color: transparent;
-  backdrop-filter: blur(35px) grayscale(30%);
+  backdrop-filter: blur(6px) grayscale(5%);
+  overflow: hidden;
 
   &__left-side-block {
     display: flex;

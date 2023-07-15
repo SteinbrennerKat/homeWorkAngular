@@ -137,6 +137,7 @@ $app-dark-theme: create-flo-theme($app-dark-primary, $app-dark-accent, $app-dark
 
 html, body {
   height: 100%;
+  overflow: hidden;
 }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -155,8 +156,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .gradient {
   position: absolute;
-  --size: 1000px;
-  --speed: 50s;
+  --size: 70vh;
+  --speed: 45s;
   --easing: cubic-bezier(0.8, 0.2, 0.2, 0.8);
 
   width: var(--size);
@@ -165,11 +166,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-image: linear-gradient(hsl(158, 82, 57, 85%), hsl(252, 82, 57));
   animation: rotate var(--speed) var(--easing) alternate infinite;
   border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  overflow: hidden;
 }
 
 @media (min-width: 720px) {
   .gradient {
-    --size: 70vh;
+    --size: 80vh;
   }
 }
 

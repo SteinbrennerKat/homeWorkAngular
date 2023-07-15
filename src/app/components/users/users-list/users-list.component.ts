@@ -99,6 +99,7 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.tableChangeRequest$.complete();
   }
 
   private initPaginator() {
@@ -135,7 +136,7 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
       width: '650px',
       data: user,
     }).afterClosed().pipe(filter(v => !!v)).subscribe(res => {
-      this.service.deleteUser(user.id).subscribe(() => {
+      this.service.deleteUser(user.id).pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.tableChangeRequest$.next({sort: this.sort, pagination: this.pagination});
       });
     });
