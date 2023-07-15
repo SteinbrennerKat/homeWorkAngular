@@ -56,7 +56,7 @@ import {MatSortModule, Sort} from "@angular/material/sort";
 export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$: Subject<void> = new Subject();
   private sort: Sort = {active: 'createdDate', direction: 'desc'};
-  private pagination: Pagination = {pageSize: 3, pageIndex: 0};
+  private pagination: Pagination = {pageSize: 10, pageIndex: 0};
   private userData: User[] = [];
 
   columns: string[] = [];
